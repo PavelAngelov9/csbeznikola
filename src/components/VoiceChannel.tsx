@@ -86,6 +86,12 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
           );
       });
 
+      callFrame.on('error', (e: { errorMsg?: string; error?: string }) => {
+        const msg = e?.errorMsg || e?.error || 'Unknown Daily error';
+        setJoining(false);
+        alert(msg);
+      });
+
       await callFrame.join({
         url: data.url,
         userName,
@@ -95,11 +101,17 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
 
       dailyRef.current = callFrame;
     } catch (err) {
-      console.error(err);
+      console.error('Voice join error:', err);
       setJoining(false);
-      alert(
-        err instanceof Error ? err.message : 'Failed to join voice channel'
-      );
+      const msg =
+        err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null && 'errorMsg' in err
+          ? String((err as { errorMsg: string }).errorMsg)
+          : typeof err === 'object' && err !== null && 'error' in err
+          ? String((err as { error: string }).error)
+          : 'Failed to join voice channel. Check the console for details.';
+      alert(msg);
     }
   };
 
@@ -110,11 +122,11 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/5 bg-slate-900/40 overflow-hidden">
-      <div className="border-b border-white/5 px-4 py-3 flex items-center justify-between">
+    <div className="rounded-2xl border border-red-500/10 bg-zinc-900/40 overflow-hidden">
+      <div className="border-b border-red-500/10 px-4 py-3 flex items-center justify-between">
         <div>
           <h3 className="font-semibold text-white">Voice Channel</h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-zinc-500">
             {isInCall
               ? `${participants.length + 1} in call`
               : 'Talk with friends'}
@@ -124,11 +136,11 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
           <button
             onClick={joinCall}
             disabled={joining}
-            className="flex items-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-500/30 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-red-500/20 px-4 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/30 disabled:opacity-50"
           >
             {joining ? (
               <>
-                <span className="h-3 w-3 animate-spin rounded-full border-2 border-emerald-400/30 border-t-emerald-400" />
+                <span className="h-3 w-3 animate-spin rounded-full border-2 border-red-400/30 border-t-red-400" />
                 Joining...
               </>
             ) : (
@@ -149,7 +161,7 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
       </div>
 
       {(joining || isInCall) && (
-        <div className="relative h-[300px] bg-slate-950 p-2">
+        <div className="relative h-[300px] bg-zinc-950 p-2">
           <div
             ref={meetingRef}
             className="h-full w-full rounded-xl min-h-[200px]"

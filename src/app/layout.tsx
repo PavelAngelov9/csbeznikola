@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Komunikaciq - Chat & Voice',
+  title: 'CS bez Nikola - Chat & Voice',
   description:
-    'Chat and voice call with friends across the world. Free to deploy on Vercel.'
+    'No Nikola allowed. Chat and voice with friends. Deploy free on Vercel.'
 };
 
 export default function RootLayout({

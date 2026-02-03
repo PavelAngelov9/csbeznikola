@@ -89,13 +89,13 @@ export function Chat({ userName, userId, isConfigured }: Props) {
 
   if (!isConfigured) {
     return (
-      <div className="flex flex-1 flex-col rounded-2xl border border-white/5 bg-slate-900/40">
+      <div className="flex flex-1 flex-col rounded-2xl border border-red-500/10 bg-zinc-900/40">
         <div className="flex flex-1 items-center justify-center p-8">
-          <div className="max-w-md rounded-xl border border-amber-500/20 bg-amber-500/5 p-6 text-center">
-            <p className="mb-2 font-medium text-amber-200">
+          <div className="max-w-md rounded-xl border border-red-500/20 bg-red-500/5 p-6 text-center">
+            <p className="mb-2 font-medium text-red-200">
               Supabase not configured
             </p>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-zinc-400">
               Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to
               your environment, then run the SQL in supabase/schema.sql
             </p>
@@ -106,10 +106,10 @@ export function Chat({ userName, userId, isConfigured }: Props) {
   }
 
   return (
-    <div className="flex flex-1 flex-col rounded-2xl border border-white/5 bg-slate-900/40">
-      <div className="border-b border-white/5 px-4 py-3">
+    <div className="flex flex-1 flex-col rounded-2xl border border-red-500/10 bg-zinc-900/40">
+      <div className="border-b border-red-500/10 px-4 py-3">
         <h3 className="font-semibold text-white">Chat</h3>
-        <p className="text-xs text-slate-500">Real-time messages</p>
+        <p className="text-xs text-zinc-500">Real-time messages</p>
       </div>
 
       <div
@@ -118,12 +118,12 @@ export function Chat({ userName, userId, isConfigured }: Props) {
       >
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-amber-500/30 border-t-amber-500" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-red-500/30 border-t-red-500" />
           </div>
         ) : error ? (
           <p className="text-sm text-red-400">{error}</p>
         ) : messages.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-500">
+          <p className="py-8 text-center text-sm text-zinc-500">
             No messages yet. Say hello!
           </p>
         ) : (
@@ -134,15 +134,15 @@ export function Chat({ userName, userId, isConfigured }: Props) {
                 m.sender_id === userId ? 'items-end' : 'items-start'
               }`}
             >
-              <span className="mb-0.5 text-xs text-slate-500">
+              <span className="mb-0.5 text-xs text-zinc-500">
                 {m.sender_name}
                 {m.sender_id === userId && ' (you)'}
               </span>
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-2 ${
                   m.sender_id === userId
-                    ? 'rounded-br-md bg-amber-500/20 text-white'
-                    : 'rounded-bl-md bg-slate-700/50 text-slate-200'
+                    ? 'rounded-br-md bg-red-500/20 text-white'
+                    : 'rounded-bl-md bg-zinc-700/50 text-zinc-200'
                 }`}
               >
                 <p className="text-sm">{m.content}</p>
@@ -152,20 +152,20 @@ export function Chat({ userName, userId, isConfigured }: Props) {
         )}
       </div>
 
-      <form onSubmit={sendMessage} className="border-t border-white/5 p-4">
+      <form onSubmit={sendMessage} className="border-t border-red-500/10 p-4">
         <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 rounded-xl border border-white/10 bg-slate-800/50 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20"
+            className="flex-1 rounded-xl border border-red-500/20 bg-zinc-800/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-red-500/50 focus:ring-1 focus:ring-red-500/20"
             maxLength={500}
           />
           <button
             type="submit"
             disabled={!input.trim()}
-            className="rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-medium text-slate-900 transition hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Send
           </button>

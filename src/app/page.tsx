@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { Chat } from '@/components/Chat';
 import { VoiceChannel } from '@/components/VoiceChannel';
 import { UserNameModal } from '@/components/UserNameModal';
+import { SkullIcon, NoEntryIcon } from '@/components/ForbiddenIcons';
 
-const USER_KEY = 'komunikaciq_user';
-const ID_KEY = 'komunikaciq_id';
+const USER_KEY = 'cs_bez_nikola_user';
+const ID_KEY = 'cs_bez_nikola_id';
 
 function generateId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -57,31 +58,50 @@ export default function Home() {
   if (showModal) {
     return (
       <>
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" />
+        <div className="min-h-screen bg-gradient-to-br from-black via-zinc-950 to-black" />
         <UserNameModal isOpen={showModal} onSubmit={handleNameSubmit} />
       </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-gradient-to-br from-black via-zinc-950 to-black overflow-hidden">
+      {/* Forbidden decor */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden opacity-[0.03]">
+        <div className="absolute top-10 left-10">
+          <SkullIcon className="h-24 w-24 text-red-500" />
+        </div>
+        <div className="absolute top-20 right-20">
+          <NoEntryIcon className="h-20 w-20 text-red-500" />
+        </div>
+        <div className="absolute bottom-32 left-1/4">
+          <NoEntryIcon className="h-16 w-16 text-red-500" />
+        </div>
+        <div className="absolute bottom-20 right-1/4">
+          <SkullIcon className="h-20 w-20 text-red-500" />
+        </div>
+      </div>
+
+      <div className="relative mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         <header className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
-              Komunikaciq
-            </h1>
-            <p className="mt-0.5 text-sm text-slate-500">
-              Chat & voice with friends across the world
-            </p>
+          <div className="flex items-center gap-3">
+            <SkullIcon className="h-8 w-8 text-red-500" />
+            <div>
+              <h1 className="bg-gradient-to-r from-red-400 via-red-500 to-red-600 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
+                CS bez Nikola
+              </h1>
+              <p className="mt-0.5 text-sm text-zinc-500">
+                No Nikola allowed · Chat & voice
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="rounded-lg bg-slate-800/50 px-3 py-1.5 text-sm text-slate-300">
+            <span className="rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-1.5 text-sm text-red-200">
               {userName}
             </span>
             <button
               onClick={signOut}
-              className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-slate-400 transition hover:border-white/20 hover:text-white"
+              className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-zinc-400 transition hover:border-red-500/30 hover:text-red-300"
             >
               Sign out
             </button>
@@ -97,8 +117,9 @@ export default function Home() {
           />
         </div>
 
-        <footer className="mt-8 text-center text-xs text-slate-600">
-          Deploy free on Vercel · Supabase · Daily.co
+        <footer className="mt-8 flex items-center justify-center gap-2 text-xs text-zinc-600">
+          <NoEntryIcon className="h-4 w-4" />
+          CS bez Nikola · Deploy free on Vercel
         </footer>
       </div>
     </div>

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         .replace(/[^a-zA-Z0-9-_]/g, '-')
         .slice(0, 50) || 'main';
 
-    const response = await fetch('https://api.daily.co/v1/rooms', {
+    const createResponse = await fetch('https://api.daily.co/v1/rooms', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,16 +38,47 @@ export async function POST(request: NextRequest) {
       })
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      console.error('Daily API error:', err);
-      return NextResponse.json(
-        { error: 'Failed to create voice room', details: err },
-        { status: response.status }
-      );
+    let room: { url: string; name: string };
+
+    if (createResponse.ok) {
+      room = await createResponse.json();
+    } else {
+      const errText = await createResponse.text();
+      const errJson = (() => {
+        try {
+          return JSON.parse(errText) as { info?: string };
+        } catch {
+          return {};
+        }
+      })();
+      // If room already exists, fetch the existing room URL
+      if (
+        createResponse.status === 400 &&
+        errJson.info?.toLowerCase().includes('already exists')
+      ) {
+        const getResponse = await fetch(
+          `https://api.daily.co/v1/rooms/${encodeURIComponent(sanitizedName)}`,
+          {
+            headers: { Authorization: `Bearer ${apiKey}` }
+          }
+        );
+        if (!getResponse.ok) {
+          console.error('Daily GET room error:', await getResponse.text());
+          return NextResponse.json(
+            { error: 'Failed to get existing room' },
+            { status: 500 }
+          );
+        }
+        room = await getResponse.json();
+      } else {
+        console.error('Daily API error:', errText);
+        return NextResponse.json(
+          { error: 'Failed to create voice room', details: errText },
+          { status: createResponse.status }
+        );
+      }
     }
 
-    const room = await response.json();
     return NextResponse.json({ url: room.url, name: room.name });
   } catch (error) {
     console.error('Room creation error:', error);

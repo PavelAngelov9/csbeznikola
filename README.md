@@ -1,12 +1,12 @@
-# Komunikaciq
+# CS bez Nikola
 
-A minimal chat + voice app to talk with friends across the world. Deploy free on Vercel.
+No Nikola allowed. A minimal chat + voice app with a forbidden theme. Deploy free on Vercel.
 
 ## Features
 
 - **Real-time chat** via Supabase
 - **Voice channels** via Daily.co (10,000 free minutes/month)
-- Clean, modern UI
+- Forbidden/danger theme with skulls & no-entry vibes
 - No sign-up required – just enter your name
 
 ## Quick Start
