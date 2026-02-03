@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { getSupabase } from '@/lib/supabase';
 import type { Message } from '@/lib/supabase';
 
+const CHAT_CHANNEL = 'cs-bez-nikola-chat';
+
 type Props = {
   userName: string;
   userId: string;
@@ -16,6 +18,7 @@ export function Chat({ userName, userId, isConfigured }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const channelRef = useRef<{ send: (args: unknown) => void } | null>(null);
 
   useEffect(() => {
     if (!isConfigured) {
@@ -47,19 +50,30 @@ export function Chat({ userName, userId, isConfigured }: Props) {
 
     fetchMessages();
 
-    const channel = supabase!
-      .channel('messages')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
+    // Use Broadcast for real-time (works without Replication config)
+    const channel = supabase
+      .channel(CHAT_CHANNEL, { config: { broadcast: { self: true } } })
+      .on('broadcast', { event: 'message' }, (payload) => {
+        const msg = payload.payload as Message;
+        if (msg?.id) {
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === msg.id)) return prev;
+            return [...prev, msg].sort(
+              (a, b) =>
+                new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime()
+            );
+          });
         }
-      )
-      .subscribe();
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED')
+          channelRef.current = channel as { send: (args: unknown) => void };
+      });
 
     return () => {
-      supabase!.removeChannel(channel);
+      channelRef.current = null;
+      supabase.removeChannel(channel);
     };
   }, [isConfigured]);
 
@@ -78,13 +92,29 @@ export function Chat({ userName, userId, isConfigured }: Props) {
     setInput('');
     const supabase = getSupabase();
     if (!supabase) return;
-    const { error: insertErr } = await supabase.from('messages').insert({
-      content: text,
-      sender_name: userName,
-      sender_id: userId
-    });
+    const { data: inserted, error: insertErr } = await supabase
+      .from('messages')
+      .insert({
+        content: text,
+        sender_name: userName,
+        sender_id: userId
+      })
+      .select()
+      .single();
 
-    if (insertErr) setError(insertErr.message);
+    if (insertErr) {
+      setError(insertErr.message);
+      return;
+    }
+
+    // Broadcast for real-time delivery to all clients
+    if (inserted && channelRef.current) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'message',
+        payload: inserted
+      });
+    }
   };
 
   if (!isConfigured) {

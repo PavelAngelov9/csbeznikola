@@ -21,5 +21,5 @@ CREATE POLICY "Allow public read" ON messages
 CREATE POLICY "Allow public insert" ON messages
   FOR INSERT WITH CHECK (true);
 
--- Enable Realtime: In Supabase Dashboard → Database → Replication
--- add the "messages" table to the supabase_realtime publication.
+-- Realtime: Chat uses Broadcast (no Replication needed).
+-- For postgres_changes, add "messages" to supabase_realtime in Dashboard → Database → Replication.

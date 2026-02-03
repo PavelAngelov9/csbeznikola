@@ -18,7 +18,8 @@ declare global {
   }
 }
 
-const JITSI_SCRIPT = 'https://meet.jit.si/external_api.js';
+const JITSI_DOMAIN = 'meet.jit.si';
+const JITSI_SCRIPT = `https://${JITSI_DOMAIN}/external_api.js`;
 const ROOM_NAME = 'csBezNikola';
 
 function loadScript(src: string): Promise<void> {
@@ -67,7 +68,7 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
       const container = meetingRef.current;
       if (!container) throw new Error('Meeting container not ready');
 
-      const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
+      const api = new window.JitsiMeetExternalAPI(JITSI_DOMAIN, {
         roomName: ROOM_NAME,
         width: '100%',
         height: '100%',
@@ -75,7 +76,9 @@ export function VoiceChannel({ userName, isConfigured = true }: Props) {
         userInfo: { displayName: userName },
         configOverwrite: {
           startWithAudioMuted: false,
-          startWithVideoMuted: true
+          startWithVideoMuted: true,
+          prejoinPageEnabled: false,
+          enableWelcomePage: false
         }
       });
 
