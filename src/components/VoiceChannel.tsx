@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   userName: string;
-  isConfigured: boolean;
+  isConfigured?: boolean;
 };
 
-export function VoiceChannel({ userName, isConfigured }: Props) {
+export function VoiceChannel({ userName, isConfigured = true }: Props) {
   const [isInCall, setIsInCall] = useState(false);
   const [joining, setJoining] = useState(false);
   const [participants, setParticipants] = useState<string[]>([]);
@@ -108,21 +108,6 @@ export function VoiceChannel({ userName, isConfigured }: Props) {
       dailyRef.current.leave();
     }
   };
-
-  if (!isConfigured) {
-    return (
-      <div className="rounded-2xl border border-white/5 bg-slate-900/40 p-6">
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-center">
-          <p className="mb-1 font-medium text-amber-200">
-            Daily.co not configured
-          </p>
-          <p className="text-sm text-slate-400">
-            Add DAILY_API_KEY to your environment for voice channels
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl border border-white/5 bg-slate-900/40 overflow-hidden">

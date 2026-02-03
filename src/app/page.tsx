@@ -51,7 +51,8 @@ export default function Home() {
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   );
-  const isDailyConfigured = !!process.env.DAILY_API_KEY;
+  // DAILY_API_KEY is server-only, so we can't check it on the client.
+  // Voice channel always shows; API returns error if key is missing.
 
   if (showModal) {
     return (
@@ -88,10 +89,7 @@ export default function Home() {
         </header>
 
         <div className="space-y-6">
-          <VoiceChannel
-            userName={userName ?? 'Guest'}
-            isConfigured={isDailyConfigured}
-          />
+          <VoiceChannel userName={userName ?? 'Guest'} />
           <Chat
             userName={userName ?? 'Guest'}
             userId={userId ?? ''}
